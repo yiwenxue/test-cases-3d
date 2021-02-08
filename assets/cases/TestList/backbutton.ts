@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, ScrollViewComponent, Vec3, ButtonComponent, LayoutComponent, game, LabelComponent, director, Director } from "cc";
+import { _decorator, Component, Node, ScrollView, Vec3, Layout, game, Label, director, Director, assetManager, find, Canvas, Layers } from "cc";
 const { ccclass, property } = _decorator;
 import { sceneArray } from "./scenelist";
 
@@ -6,20 +6,25 @@ import { sceneArray } from "./scenelist";
 export class BackButton extends Component {
     private static _offset = new Vec3();
     public static _scrollNode : Node | null  = null;
-    private static _scrollCom : ScrollViewComponent | null = null;
+    private static _scrollCom : ScrollView | null = null;
 
     private static _sceneIndex : number = -1;
     private static _blockInput : Node;
     private static _prevNode : Node;
     private static _nextNode : Node;
-    private sceneName : LabelComponent;
+    private sceneName! : Label;
 
     __preload() {
-        const sceneInfo = game._sceneInfos;
-        const array: string[] = sceneInfo.map((i) => i.url).sort();
+        const sceneInfo = assetManager.main!.config.scenes;
+        const array: string[] = [];
+        sceneInfo.forEach((i) => array.push(i.url));
+        array.sort();
         for (let i = 0;  i< array.length; i++) {
             let str = array[i];
             if (str.includes('TestList') || str.includes('subPack') || str.includes('static-ui-replace')) {
+                continue;
+            }
+            if (str.includes('asset-bundle-zip') && !assetManager.downloader.remoteServerAddress) {
                 continue;
             }
             const firstIndex = str.lastIndexOf('/') + 1;
@@ -38,7 +43,7 @@ export class BackButton extends Component {
 
     public static saveOffset () {
         if (BackButton._scrollNode ) {
-            BackButton._offset = new Vec3(0, BackButton._scrollCom.getScrollOffset().y, 0);
+            BackButton._offset = new Vec3(0, BackButton._scrollCom!.getScrollOffset().y, 0);
         }
     }
 
@@ -58,11 +63,13 @@ export class BackButton extends Component {
     }
 
     start () {
-        this.sceneName = director.getScene().getChildByName("backRoot").getChildByName("sceneName").getComponent(LabelComponent);
+        let camera = this.node.getComponent(Canvas)!.cameraComponent!;
+        if (camera.visibility & Layers.Enum.UI_2D) camera.visibility &= ~Layers.Enum.UI_2D;
+        this.sceneName = find("backRoot")!.getChildByName("sceneName")!.getComponent(Label)!;
         game.addPersistRootNode(this.node);
-        BackButton._scrollNode = this.node.getParent().getChildByPath('Canvas/ScrollView') as Node;
+        BackButton._scrollNode = this.node.getParent()!.getChildByPath('Canvas/ScrollView') as Node;
         if (BackButton._scrollNode) {
-            BackButton._scrollCom = BackButton._scrollNode.getComponent(ScrollViewComponent);
+            BackButton._scrollCom = BackButton._scrollNode.getComponent(ScrollView);
         }
         BackButton._blockInput = this.node.getChildByName('BlockInput') as Node;
         BackButton._blockInput.active = false;
@@ -74,6 +81,13 @@ export class BackButton extends Component {
         director.on(Director.EVENT_BEFORE_SCENE_LOADING,this.switchSceneName,this);
     }
 
+    onDestroy () {
+        let length = sceneArray.length;
+        for(let i = 0; i < length; i++) {
+            sceneArray.pop();
+        }
+    }
+
     switchSceneName () {
         if (this.getSceneName() == null) {
             return;
@@ -83,28 +97,24 @@ export class BackButton extends Component {
     }
 
     backToList () {
-        if (game.isPaused()) {
-            game.resume();
-        }
+        director.resume();
         BackButton._blockInput.active = true;
-        director.loadScene('TestList', function () {
+        director.loadScene('TestList', ()=> {
             this.sceneName.node.active = false;
             BackButton._sceneIndex = -1;
             BackButton.refreshButton();
-            BackButton._scrollNode = this.node.getParent().getChildByPath('Canvas/ScrollView') as Node;
+            BackButton._scrollNode = this.node.parent!.getChildByPath('Canvas/ScrollView') as Node;
             if (BackButton._scrollNode) {
-                BackButton._scrollCom = BackButton._scrollNode.getComponent(ScrollViewComponent);
-                BackButton._scrollCom._content.getComponent(LayoutComponent).updateLayout();
-                BackButton._scrollCom.scrollToOffset(BackButton.offset,0.1,true);
+                BackButton._scrollCom = BackButton._scrollNode.getComponent(ScrollView);
+                BackButton._scrollCom!.content!.getComponent(Layout)!.updateLayout();
+                BackButton._scrollCom!.scrollToOffset(BackButton.offset,0.1,true);
             }
             BackButton._blockInput.active = false;
-        }.bind(this));
+        });
     }
 
     nextScene () {
-        if(game.isPaused()){
-            game.resume();
-        }
+        director.resume();
         BackButton._blockInput.active = true;
         this.updateSceneIndex(true);
         director.loadScene(this.getSceneName(), function () {
@@ -113,9 +123,7 @@ export class BackButton extends Component {
     }
 
     preScene () {
-        if(game.isPaused()){
-            game.resume();
-        }
+        director.resume();
         BackButton._blockInput.active = true;
         this.updateSceneIndex(false);
         director.loadScene(this.getSceneName(), function() {

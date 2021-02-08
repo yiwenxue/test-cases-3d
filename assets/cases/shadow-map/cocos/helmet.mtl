@@ -11,10 +11,10 @@
     {
       "USE_NORMAL_MAP": true,
       "USE_ALBEDO_MAP": true,
-      "USE_PBR_MAP": true,
-      "OCCLUSION_CHANNEL": "b",
-      "METALLIC_CHANNEL": "r"
-    }
+      "USE_PBR_MAP": true
+    },
+    {},
+    {}
   ],
   "_states": [
     {
@@ -25,7 +25,9 @@
       },
       "depthStencilState": {},
       "rasterizerState": {}
-    }
+    },
+    {},
+    {}
   ],
   "_props": [
     {
@@ -38,6 +40,8 @@
       "pbrMap": {
         "__uuid__": "83f22f4a-e661-420e-9d43-f855964e22d3@6c48a"
       }
-    }
+    },
+    {},
+    {}
   ]
 }

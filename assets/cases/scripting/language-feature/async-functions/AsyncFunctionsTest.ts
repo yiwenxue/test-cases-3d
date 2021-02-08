@@ -1,13 +1,14 @@
 
-import * as cc from 'cc';
+import { _decorator, Component } from "cc";
+const { ccclass, property, menu } = _decorator;
 import { UILog } from '../../../ui/ui-log';
 
-@cc._decorator.ccclass('AsyncFunctionsTest')
-@cc._decorator.menu('TestCases/Scripting/LanguageFeature/AsyncFunctionsTest')
-export class AsyncFunctionsTest extends cc.Component {
-    @cc._decorator.property(UILog)
-    logPanel: UILog = null;
-    
+@ccclass('AsyncFunctionsTest')
+@menu('TestCases/Scripting/LanguageFeature/AsyncFunctionsTest')
+export class AsyncFunctionsTest extends Component {
+    @property(UILog)
+    public logPanel: UILog = null!;
+
     public start () {
         (async () => { // Directly running an async function should be OK.
             this._getLogPanelChecked().addLabel(`Async function starts at ${new Date()}`);
@@ -41,7 +42,7 @@ export class AsyncFunctionsTest extends cc.Component {
 }
 
 async function sleep (duration: number) { // Define an async function should be OK.
-    return await new Promise((resolve, reject) => { // `await` in async function should be OK.
+    return await new Promise<void>((resolve, reject) => { // `await` in async function should be OK.
         setTimeout(() => {
             resolve();
         }, duration);
@@ -49,7 +50,7 @@ async function sleep (duration: number) { // Define an async function should be 
 }
 
 const sleepThrow = async (at: number) => { // Define an async lambda should be OK.
-    return await new Promise((resolve, reject) => { // `await` in lambda should be OK.
+    return await new Promise<void>((resolve, reject) => { // `await` in lambda should be OK.
         setTimeout(() => {
             reject(new Error(`Oops...`));
         }, at);

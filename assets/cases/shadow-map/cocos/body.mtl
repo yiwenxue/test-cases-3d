@@ -13,7 +13,9 @@
       "USE_ALBEDO_MAP": true,
       "USE_PBR_MAP": true,
       "USE_EMISSIVE_MAP": true
-    }
+    },
+    {},
+    {}
   ],
   "_states": [
     {
@@ -24,7 +26,9 @@
       },
       "depthStencilState": {},
       "rasterizerState": {}
-    }
+    },
+    {},
+    {}
   ],
   "_props": [
     {
@@ -47,6 +51,8 @@
       "emissiveMap": {
         "__uuid__": "f1e12cdf-e92e-4c48-853b-7626c459a656@6c48a"
       }
-    }
+    },
+    {},
+    {}
   ]
 }

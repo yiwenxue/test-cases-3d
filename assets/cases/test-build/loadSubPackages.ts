@@ -1,34 +1,25 @@
-import { _decorator, Component, Node, loader, SpriteComponent, SpriteAtlas, LabelComponent } from "cc";
+import { _decorator, Component, Node, loader, Sprite, SpriteAtlas, Label, assetManager, Color } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("loadSubPackages")
 export class loadSubPackages extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
 
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
-    @property({type: LabelComponent})
-    label = null;
+    @property({type: Label})
+    public label: Label = null!;
 
     @property({type: Node})
-    canvas = null;
+    public canvas: Node = null!;
     start () {
         // Your initialization goes here.
         this.loadSubPackage();
     }
 
     loadSubPackage() {
-        if (CC_ALIPAY || CC_COCOSPLAY || CC_BYTEDANCE || !(CC_MINIGAME || CC_RUNTIME_BASED)) {
-            this.label.string = '该平台暂不支持分包加载';
-            return;
-        }
         this.label.string = 'Load subPackage...';
         loader.downloader.loadSubpackage('subPackage', (err: any) => {
             if (err) {
                 this.label.string = 'load subPackage failed!';
-                this.label.color = 'red';
+                this.label.color = Color.RED;
                 return console.error(err);
             }
             this.label.string = 'load subPackage success!';
@@ -38,16 +29,16 @@ export class loadSubPackages extends Component {
     }
 
     loadSpriteAtlas () {
-        loader.loadRes('test_atlas/sheep-subPackage/sheep', SpriteAtlas, (err, atlas) => {
+        assetManager.getBundle('subPackage')!.load<SpriteAtlas>('sheep', SpriteAtlas, (err, atlas) => {
             if (err) {
                 return console.error(err);
             }
-            loader.setAutoRelease(atlas, true);
+            loader.setAutoRelease(atlas!, true);
             const node = new Node();
             this.canvas.addChild(node);
             node.setPosition(0, 0, 0);
-            const sprite = node.addComponent(SpriteComponent);
-            sprite.spriteFrame = atlas.getSpriteFrame('sheep_down_0');
+            const sprite = node.addComponent(Sprite);
+            sprite.spriteFrame = atlas!.getSpriteFrame('sheep_down_0');
             this.label.string += '\nLoad atlas in subPackage success!';
             console.log('Load atlas in subPackage success!')
         });

@@ -1,44 +1,48 @@
-import { _decorator, Component, Node, SpriteComponent, SpriteFrame, CanvasComponent, RenderTexture, view, cclegacy } from 'cc';
+import { _decorator, Component, Node, Sprite, SpriteFrame, Canvas, RenderTexture, view } from 'cc';
 const { ccclass, property, menu } = _decorator;
 
 @ccclass('RenderUIToSpriteFrame')
 @menu('RenderTexture/RenderUIToSpriteFrame')
 export class RenderUIToSpriteFrame extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
 
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
-    @property(SpriteComponent)
-    content: SpriteComponent = null;
+    @property(Sprite)
+    public content: Sprite = null!;
+
+    protected _renderTex: RenderTexture | null = null;
 
     start () {
-        const spriteframe = this.content.spriteFrame;
+        const spriteFrame = this.content.spriteFrame!;
         const sp = new SpriteFrame();
         sp.reset({
-            originalSize: spriteframe.getOriginalSize(),
-            rect: spriteframe.getRect(),
-            offset: spriteframe.getOffset(),
-            isRotate: spriteframe.isRotated(),
-            borderTop: spriteframe.insetTop,
-            borderLeft: spriteframe.insetLeft,
-            borderBottom: spriteframe.insetBottom,
-            borderRight: spriteframe.insetRight,
+            originalSize: spriteFrame.originalSize,
+            rect: spriteFrame.rect,
+            offset: spriteFrame.offset,
+            isRotate: spriteFrame.rotated,
+            borderTop: spriteFrame.insetTop,
+            borderLeft: spriteFrame.insetLeft,
+            borderBottom: spriteFrame.insetBottom,
+            borderRight: spriteFrame.insetRight,
         });
 
-        const renderTex = new RenderTexture();
+        const renderTex = this._renderTex = new RenderTexture();
         const size = view.getVisibleSize();
         renderTex.reset({
             width: size.width,
             height: size.height,
         });
 
-        const cameraComp = this.getComponent(CanvasComponent);
+        const cameraComp = this.getComponent(Canvas)!;
         cameraComp.targetTexture = renderTex;
 
         sp.texture = renderTex;
         this.content.spriteFrame = sp;
+    }
+
+    onDestroy () {
+        if (this._renderTex) {
+            this._renderTex.destroy();
+            this._renderTex = null;
+        }
     }
 
     // update (deltaTime: number) {

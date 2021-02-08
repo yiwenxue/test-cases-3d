@@ -1,30 +1,34 @@
-import { _decorator, Component, RenderTexture, CameraComponent, ModelComponent } from 'cc';
+import { _decorator, Component, RenderTexture, Camera, MeshRenderer } from 'cc';
 const { ccclass, property, menu } = _decorator;
 
 @ccclass('RenderCameraToModel')
 @menu('RenderTexture/RenderCameraToModel')
 export class RenderCameraToModel extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
 
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
-    @property(ModelComponent)
-    model: ModelComponent = null;
+    @property(MeshRenderer)
+    public model: MeshRenderer = null!;
+
+    protected _renderTex: RenderTexture | null = null;
 
     start () {
         // Your initialization goes here.
-        const renderTex = new RenderTexture();
+        const renderTex = this._renderTex = new RenderTexture();
         renderTex.reset({
             width: 256,
             height: 256,
         });
-        const cameraComp = this.getComponent(CameraComponent);
+        const cameraComp = this.getComponent(Camera)!;
         cameraComp.targetTexture = renderTex;
-        const pass = this.model.material.passes[0];
+        const pass = this.model.material!.passes[0];
         const binding = pass.getBinding('mainTexture');
-        pass.bindTexture(binding, renderTex.getGFXTexture());
+        pass.bindTexture(binding, renderTex.getGFXTexture()!);
+    }
+
+    onDestroy () {
+        if (this._renderTex) {
+            this._renderTex.destroy();
+            this._renderTex = null;
+        }        
     }
 
     // update (deltaTime: number) {

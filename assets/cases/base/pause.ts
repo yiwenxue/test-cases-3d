@@ -3,12 +3,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass("newScript")
 export class newScript extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
 
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
     private timer = false;
     private _y = 0;
     start () {
@@ -22,6 +17,10 @@ export class newScript extends Component {
         }
         if(this._y >= 2) {
             this.timer=false;
+        }
+        if(deltaTime > 1) {
+            // hack for first frame
+            deltaTime = 1;
         }
         if(this.timer) {
             this._y += 1*deltaTime;

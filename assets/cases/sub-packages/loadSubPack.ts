@@ -1,20 +1,15 @@
-import { _decorator, Component, LabelComponent, Node, ButtonComponent, Prefab, instantiate, loader, director } from "cc";
+import { _decorator, Component, Label, Node, Button, Prefab, instantiate, loader, director, math } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("loadSubPack")
 export class loadSubPack extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
 
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
-    @property({type: LabelComponent})
-    label = null;
-    @property({type: ButtonComponent})
-    createButton_1 = null;
-    @property({type: ButtonComponent})
-    createButton_2 = null;
+    @property({type: Label})
+    label!: Label;
+    @property({type: Button})
+    createButton_1!: Button;
+    @property({type: Button})
+    createButton_2!: Button;
 
     start () {
         // Your initialization goes here.
@@ -24,15 +19,11 @@ export class loadSubPack extends Component {
     loadSubPackages() {
         this.createButton_1.node.active = false;
         this.createButton_2.node.active = false;
-        if(CC_ALIPAY || CC_COCOSPLAY || CC_BYTEDANCE || !(CC_MINIGAME || CC_RUNTIME_BASED)) {
-            this.label.string = '该平台暂不支持分包加载';
-            return;
-        }
         this.label.string = 'Load subPackage...';
         loader.downloader.loadSubpackage('sub-pack-01',(err: any) => {
             if(err) {
                 this.label.string = 'load sub-pack-01 failed!';
-                this.label.color = 'red';
+                this.label.color = math.Color.RED;
                 return console.error(err);
             }
             this.label.string = 'load sub-pack-01 success!';
@@ -42,7 +33,7 @@ export class loadSubPack extends Component {
             loader.downloader.loadSubpackage('sub-pack-02',(err: any) => {
                 if(err) {
                     this.label.string = 'load sub-pack-02 failed!';
-                    this.label.color = 'red';
+                    this.label.color = math.Color.RED;
                     return console.error(err);
                 }
                 this.label.string += '\n load sub-pack-02 success!';
