@@ -1,0 +1,46 @@
+{
+  "ver": "1.0.25",
+  "importer": "image",
+  "imported": true,
+  "uuid": "472506d6-664f-4dbb-8deb-34d3c924eb9e",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "472506d6-664f-4dbb-8deb-34d3c924eb9e@6c48a",
+      "displayName": "gold5",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "clamp-to-edge",
+        "wrapModeT": "clamp-to-edge",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "472506d6-664f-4dbb-8deb-34d3c924eb9e",
+        "visible": true
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "hasAlpha": true,
+    "type": "texture",
+    "redirect": "472506d6-664f-4dbb-8deb-34d3c924eb9e@6c48a",
+    "compressSettings": {
+      "useCompressTexture": true,
+      "presetId": "dccb557a034387b75e6baa80196832f0"
+    },
+    "fixAlphaTransparencyArtifacts": false
+  }
+}
